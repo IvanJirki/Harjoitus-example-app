@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, SectionList, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './style';
+import SportModal from './SportModal';  // Varmista, että modal-komponentti on tuotu
 
 const SportsList = ({ onAddSport }) => {
   const [searchInput, setSearchInput] = useState('');
   const [filteredSports, setFilteredSports] = useState([]);
   const [addedSports, setAddedSports] = useState({}); // Tilaseuranta lisätyille urheilulajeille
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedSport, setSelectedSport] = useState(null);
 
   const sportsCategories = [
     { title: 'Endurance Sports', data: ['Running', 'Cycling', 'Swimming', 'Rowing', 'Track and Field'] },
@@ -42,10 +45,20 @@ const SportsList = ({ onAddSport }) => {
   const handleAddSport = (sport) => {
     onAddSport(sport);
     setAddedSports((prev) => ({ ...prev, [sport]: true }));
-    
+
     setTimeout(() => {
       setAddedSports((prev) => ({ ...prev, [sport]: false }));
     }, 2000);
+  };
+
+  const openModal = (sport) => {
+    setSelectedSport(sport);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedSport(null);
   };
 
   return (
@@ -59,17 +72,22 @@ const SportsList = ({ onAddSport }) => {
           onChangeText={searchSports}
         />
       </View>
+
       <Text style={styles.subTitle}>Available Sports</Text>
+
+      {/* Urheilukategorioiden listaus */}
       <SectionList
         sections={filteredSports}
         keyExtractor={(item, index) => item + index}
         renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.categoryTitle}>{title}</Text>
+          <TouchableOpacity onPress={() => console.log(`Clicked on ${title}`)}>
+            <Text style={styles.categoryTitle}>{title}</Text>
+          </TouchableOpacity>
         )}
         renderItem={({ item }) => (
           <View style={styles.exerciseItem}>
             <Text style={styles.exerciseText}>{item}</Text>
-            <TouchableOpacity onPress={() => handleAddSport(item)}>
+            <TouchableOpacity onPress={() => openModal(item)}>
               <Ionicons 
                 name={addedSports[item] ? "checkmark-circle-outline" : "add-circle-outline"} 
                 size={24} 
@@ -80,6 +98,14 @@ const SportsList = ({ onAddSport }) => {
         )}
         ListEmptyComponent={<Text style={styles.noResultsText}>No sports found. Try a different search.</Text>}
         style={styles.flatListContainer}
+      />
+
+      {/* SportModal, joka avautuu painettaessa urheilulajia */}
+      <SportModal 
+        modalVisible={modalVisible}
+        setModalVisible={closeModal}
+        selectedSport={selectedSport}
+        saveSelection={handleAddSport}
       />
     </View>
   );
