@@ -1,0 +1,3 @@
+npm install react-native-gesture-handler
+npm install expo-linear-gradient
+npm install @expo/vector-icons
