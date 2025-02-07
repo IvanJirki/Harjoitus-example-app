@@ -184,59 +184,88 @@ const styles = StyleSheet.create({
   },
 
   //Uudet tyylit modaalille
-  modalContainer: {
+  modalOverlay: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Tummennettu tausta
-    paddingHorizontal: 20, // Varmistetaan, ettei sisällön reunoilla ole liikaa tyhjää
   },
   modalContent: {
-    width: '90%', // Maksimi leveys
-    maxWidth: 400, // Määrätään maksimileveys
+    width: '85%',
     backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
+    padding: 25,
+    borderRadius: 15,
     alignItems: 'center',
-    elevation: 5, // Lisää varjoa Android-laitteille
-    shadowColor: '#000', // Lisää varjoa iOS-laitteille
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    elevation: 10,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 15, // Lisää tilaa otsikon ja sisällön väliin
-    textAlign: 'center', // Keskitetään otsikko
-    color: '#333', // Parempi kontrasti
+    marginBottom: 15,
+    color: '#FF4500',
+  },
+  modalLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginVertical: 10,
+    color: '#333',
+  },
+  pickerContainer: {
+    width: '100%',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    paddingVertical: 5,
   },
   picker: {
-    height: 150, // Korkeuden säätö, jotta valitsimet eivät ole liian pieniä
+    color: '#333',
+  },
+  dateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF4500',
+    padding: 12,
+    borderRadius: 10,
+    marginVertical: 10,
     width: '100%',
-    marginVertical: 20, // Lisää tilaa ylös ja alas
+    justifyContent: 'center',
+  },
+  dateText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 10,
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
     marginTop: 20,
-    paddingHorizontal: 10, // Lisää tilaa nappien väliin
   },
-  modalButton: {
-    flex: 1, // Varmistaa, että napit venyvät
-    marginHorizontal: 5, // Lisää väliä nappien välille
-    paddingVertical: 10, // Lisää tilaa napin sisälle
-    borderRadius: 5,
-    backgroundColor: '#FF6347', // Esimerkiksi punainen
+  previousButton: {
+    backgroundColor: '#ccc',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 8,
   },
-  modalButtonText: {
-    textAlign: 'center',
+  nextButton: {
+    backgroundColor: '#FF8C00',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 8,
+  },
+  saveButton: {
+    backgroundColor: '#32CD32',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 8,
+  },
+  buttonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
-  
 });
 
 export default styles;

@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, SectionList, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './style';
-import SportModal from './SportModal';  // Varmista, että modal-komponentti on tuotu
+import SportModal from './SportModal';  // ✅ Varmistetaan, että import on oikein
+import SportCalendar from './SportCalendar'; // ✅ Varmistetaan, että import on oikein
 
-const SportsList = ({ onAddSport }) => {
+const SportsList = () => {
+  const [selectedSports, setSelectedSports] = useState([]); 
   const [searchInput, setSearchInput] = useState('');
   const [filteredSports, setFilteredSports] = useState([]);
-  const [addedSports, setAddedSports] = useState({}); // Tilaseuranta lisätyille urheilulajeille
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSport, setSelectedSport] = useState(null);
 
@@ -27,7 +28,8 @@ const SportsList = ({ onAddSport }) => {
 
   const searchSports = (input) => {
     setSearchInput(input);
-    if (input.trim() === '') {
+
+    if (!input.trim()) {
       setFilteredSports(sportsCategories);
       return;
     }
@@ -42,23 +44,16 @@ const SportsList = ({ onAddSport }) => {
     setFilteredSports(filtered);
   };
 
-  const handleAddSport = (sport) => {
-    onAddSport(sport);
-    setAddedSports((prev) => ({ ...prev, [sport]: true }));
+  const handleAddSport = (sport, level, date) => {
+    if (!sport || !level || !date) return;
 
-    setTimeout(() => {
-      setAddedSports((prev) => ({ ...prev, [sport]: false }));
-    }, 2000);
+    const newSport = { sport, level, date };
+    setSelectedSports(prevSports => [...prevSports, newSport]);
   };
 
   const openModal = (sport) => {
     setSelectedSport(sport);
     setModalVisible(true);
-  };
-
-  const closeModal = () => {
-    setModalVisible(false);
-    setSelectedSport(null);
   };
 
   return (
@@ -75,38 +70,34 @@ const SportsList = ({ onAddSport }) => {
 
       <Text style={styles.subTitle}>Available Sports</Text>
 
-      {/* Urheilukategorioiden listaus */}
       <SectionList
         sections={filteredSports}
-        keyExtractor={(item, index) => item + index}
+        keyExtractor={(item, index) => `${item}-${index}`}
         renderSectionHeader={({ section: { title } }) => (
-          <TouchableOpacity onPress={() => console.log(`Clicked on ${title}`)}>
-            <Text style={styles.categoryTitle}>{title}</Text>
-          </TouchableOpacity>
+          <Text style={styles.categoryTitle}>{title}</Text>
         )}
         renderItem={({ item }) => (
           <View style={styles.exerciseItem}>
             <Text style={styles.exerciseText}>{item}</Text>
             <TouchableOpacity onPress={() => openModal(item)}>
-              <Ionicons 
-                name={addedSports[item] ? "checkmark-circle-outline" : "add-circle-outline"} 
-                size={24} 
-                color={addedSports[item] ? "#32CD32" : "#FF6347"} 
-              />
+              <Ionicons name="add-circle-outline" size={24} color="#FF6347" />
             </TouchableOpacity>
           </View>
         )}
         ListEmptyComponent={<Text style={styles.noResultsText}>No sports found. Try a different search.</Text>}
-        style={styles.flatListContainer}
       />
 
-      {/* SportModal, joka avautuu painettaessa urheilulajia */}
-      <SportModal 
-        modalVisible={modalVisible}
-        setModalVisible={closeModal}
-        selectedSport={selectedSport}
-        saveSelection={handleAddSport}
-      />
+      {/* ✅ Varmistetaan, että komponentit eivät ole undefined ennen renderöintiä */}
+      {SportCalendar && <SportCalendar selectedSports={selectedSports} />}
+
+      {SportModal && (
+        <SportModal 
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          selectedSport={selectedSport}
+          saveSelection={handleAddSport}
+        />
+      )}
     </View>
   );
 };
