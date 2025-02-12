@@ -1,16 +1,13 @@
 import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, TextInput, Button, Alert } from 'react-native'; // Added TextInput here
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Font from 'expo-font';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './style';
-import SportsList from './SportsList';
-import SportCalendar from './SportCalendar';
-import DistanceButton from './DistanceButton';
-import DurationButton from './DurationButton';
 
 // Drawer Navigator luonti
 const Drawer = createDrawerNavigator();
@@ -27,12 +24,131 @@ const GradientBackground = ({ children }) => (
   </LinearGradient>
 );
 
-// Home-näyttö
-const HomeScreen = () => (
-  <GradientBackground>
-    <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Welcome to Workout Diary</Text>
-  </GradientBackground>
-);
+// Home-näyttö (käyttäjän tietojen täyttämispaikka)
+const HomeScreen = ({ navigation }) => {
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [gender, setGender] = useState('');
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [goal, setGoal] = useState('');
+
+  const saveUserData = async () => {
+    // Tarkistetaan, että kaikki kentät on täytetty
+    if (!name || !age || !gender || !weight || !height || !goal) {
+      Alert.alert('Error', 'Please fill in all fields before saving!');
+      return;
+    }
+
+    try {
+      // Luodaan käyttäjän tiedot objekti
+      const userData = { name, age, gender, weight, height, goal };
+
+      // Tallennetaan tiedot AsyncStorageiin
+      await AsyncStorage.setItem('userData', JSON.stringify(userData));
+      Alert.alert('Saved!', 'Your details have been saved.');
+
+      // Siirretään käyttäjä Profile-näyttöön
+      navigation.navigate('Profile');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save data.');
+    }
+  };
+
+  return (
+    <GradientBackground>
+      <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Welcome to Workout Diary</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your name"
+          value={name}
+          onChangeText={setName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your age"
+          keyboardType="numeric"
+          value={age}
+          onChangeText={setAge}
+        />
+        <Text style={styles.label}>Select Gender:</Text>
+        <View style={styles.buttonContainer}>
+          <Button title="Male" onPress={() => setGender('Male')} />
+          <Button title="Female" onPress={() => setGender('Female')} />
+          <Button title="Other" onPress={() => setGender('Other')} />
+        </View>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your weight (kg)"
+          keyboardType="numeric"
+          value={weight}
+          onChangeText={setWeight}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your height (cm)"
+          keyboardType="numeric"
+          value={height}
+          onChangeText={setHeight}
+        />
+        <Text style={styles.label}>Select Training Goal:</Text>
+        <View style={styles.buttonContainer}>
+          <Button title="Lose weight" onPress={() => setGoal('Lose weight')} />
+          <Button title="Build muscle" onPress={() => setGoal('Build muscle')} />
+          <Button title="Improve endurance" onPress={() => setGoal('Improve endurance')} />
+          <Button title="General fitness" onPress={() => setGoal('General fitness')} />
+        </View>
+
+        <Button title="Save" onPress={saveUserData} color="#ffff" />
+      </View>
+    </GradientBackground>
+  );
+};
+
+// Profile-näyttö (käyttäjän tietojen näyttäminen)
+const ProfileScreen = () => {
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const data = await AsyncStorage.getItem('userData');
+        if (data) {
+          const parsedData = JSON.parse(data);
+          setUserData(parsedData);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  if (!userData) {
+    return (
+      <GradientBackground>
+        <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Profile</Text>
+        <Text style={styles.profileText}>Loading...</Text>
+      </GradientBackground>
+    );
+  }
+
+  return (
+    <GradientBackground>
+      <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Profile</Text>
+      <View>
+        <Text style={styles.profileText}>Name: {userData.name}</Text>
+        <Text style={styles.profileText}>Age: {userData.age}</Text>
+        <Text style={styles.profileText}>Gender: {userData.gender}</Text>
+        <Text style={styles.profileText}>Weight: {userData.weight} kg</Text>
+        <Text style={styles.profileText}>Height: {userData.height} cm</Text>
+        <Text style={styles.profileText}>Training Goal: {userData.goal}</Text>
+      </View>
+    </GradientBackground>
+  );
+};
 
 // Sport Type -näyttö
 const SportScreen = () => {
@@ -40,9 +156,11 @@ const SportScreen = () => {
   const [recentlyAdded, setRecentlyAdded] = useState(null);
 
   const handleAddSport = (sport) => {
-    setSelectedSports((prev) => [...prev, sport]);
-    setRecentlyAdded(sport);
-    setTimeout(() => setRecentlyAdded(null), 2000);
+    if (sport) {
+      setSelectedSports((prev) => [...prev, sport]);
+      setRecentlyAdded(sport);
+      setTimeout(() => setRecentlyAdded(null), 2000);
+    }
   };
 
   return (
@@ -58,7 +176,9 @@ const DistanceScreen = () => {
   const [distances, setDistances] = useState([]);
 
   const handleAddDistance = (distance) => {
-    setDistances((prev) => [...prev, distance]);
+    if (distance) {
+      setDistances((prev) => [...prev, distance]);
+    }
   };
 
   return (
@@ -74,7 +194,9 @@ const DurationScreen = () => {
   const [durations, setDurations] = useState([]);
 
   const handleAddDuration = (duration) => {
-    setDurations((prev) => [...prev, duration]);
+    if (duration) {
+      setDurations((prev) => [...prev, duration]);
+    }
   };
 
   return (
@@ -90,14 +212,6 @@ const WorkoutPlanScreen = () => (
   <GradientBackground>
     <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Workout Plan</Text>
     <SportCalendar />
-  </GradientBackground>
-);
-
-// Profile -näyttö
-const ProfileScreen = () => (
-  <GradientBackground>
-    <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Profile</Text>
-    <Text style={styles.subtitle}>User details will be shown here.</Text>
   </GradientBackground>
 );
 
