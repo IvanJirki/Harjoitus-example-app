@@ -1,21 +1,25 @@
 import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
-import { Text, View, TextInput, Button, Alert } from 'react-native'; // Added TextInput here
+import { Text, View, TextInput, Button, Alert, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'; 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Font from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFonts } from 'expo-font';
+import SportCalendar from './SportCalendar';
+import SportsList from './SportsList';
 import styles from './style';
+import { SportProvider } from './SportContext'; // Lisää tämä importti
 
-// Drawer Navigator luonti
+
+// Drawer Navigator
 const Drawer = createDrawerNavigator();
 
-// Kustomoitu taustakomponentti
+// Gradient Background Component
 const GradientBackground = ({ children }) => (
   <LinearGradient
-    colors={['#FF8C90', '#FF6347', '#FF4500']}
+    colors={['#FF4000', '#FE2E2E', '#FFFFFF']} // Vaaleammat värit
     start={{ x: 0, y: 0 }}
     end={{ x: 1, y: 1 }}
     style={styles.container}
@@ -24,7 +28,64 @@ const GradientBackground = ({ children }) => (
   </LinearGradient>
 );
 
-// Home-näyttö (käyttäjän tietojen täyttämispaikka)
+export default function App() {
+  const [fontsLoaded] = useFonts({
+    'Bangers-Regular': require('./assets/Bangers/Bangers-Regular.ttf'),
+  });
+
+  if (!fontsLoaded) {
+    return <ActivityIndicator size="large" color="#FF4500" />;
+  }
+
+  return (
+    // Käytetään SportProvideria ympäröimään sovelluksen komponentit
+    <SportProvider>
+      <NavigationContainer>
+        <Drawer.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            drawerActiveTintColor: '#ffffff',
+            drawerInactiveTintColor: '#fff',
+            drawerStyle: { backgroundColor: '#FF6347' },
+            headerStyle: { backgroundColor: '#FF4500' },
+            headerTintColor: '#fff',
+          }}
+        >
+          <Drawer.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              drawerIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
+            }}
+          />
+          <Drawer.Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={{
+              drawerIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
+            }}
+          />
+          <Drawer.Screen
+            name="Sport Calendar"
+            component={SportCalendar}
+            options={{
+              drawerIcon: ({ color, size }) => <Ionicons name="calendar" size={size} color={color} />,
+            }}
+          />
+          <Drawer.Screen
+            name="Sports List"
+            component={SportsList}
+            options={{
+              drawerIcon: ({ color, size }) => <Ionicons name="list" size={size} color={color} />,
+            }}
+          />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </SportProvider>
+  );
+}
+
+// Home Screen
 const HomeScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -34,21 +95,15 @@ const HomeScreen = ({ navigation }) => {
   const [goal, setGoal] = useState('');
 
   const saveUserData = async () => {
-    // Tarkistetaan, että kaikki kentät on täytetty
     if (!name || !age || !gender || !weight || !height || !goal) {
       Alert.alert('Error', 'Please fill in all fields before saving!');
       return;
     }
 
     try {
-      // Luodaan käyttäjän tiedot objekti
       const userData = { name, age, gender, weight, height, goal };
-
-      // Tallennetaan tiedot AsyncStorageiin
       await AsyncStorage.setItem('userData', JSON.stringify(userData));
       Alert.alert('Saved!', 'Your details have been saved.');
-
-      // Siirretään käyttäjä Profile-näyttöön
       navigation.navigate('Profile');
     } catch (error) {
       Alert.alert('Error', 'Failed to save data.');
@@ -57,57 +112,68 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <GradientBackground>
-      <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Welcome to Workout Diary</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your name"
-          value={name}
-          onChangeText={setName}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your age"
-          keyboardType="numeric"
-          value={age}
-          onChangeText={setAge}
-        />
-        <Text style={styles.label}>Select Gender:</Text>
-        <View style={styles.buttonContainer}>
-          <Button title="Male" onPress={() => setGender('Male')} />
-          <Button title="Female" onPress={() => setGender('Female')} />
-          <Button title="Other" onPress={() => setGender('Other')} />
-        </View>
+      <KeyboardAvoidingView
+        style={styles.inputContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <Text style={[styles.title, { fontFamily: 'Bangers-Regular' }]}>Welcome to Workout Diary</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your name"
+            value={name}
+            onChangeText={setName}
+            returnKeyType="next"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your age"
+            keyboardType="numeric"
+            value={age}
+            onChangeText={setAge}
+            returnKeyType="next"
+          />
+          <Text style={styles.label}>Select Gender:</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={() => setGender('Male')} style={styles.button}><Text>Male</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => setGender('Female')} style={styles.button}><Text>Female</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => setGender('Other')} style={styles.button}><Text>Other</Text></TouchableOpacity>
+          </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your weight (kg)"
-          keyboardType="numeric"
-          value={weight}
-          onChangeText={setWeight}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your height (cm)"
-          keyboardType="numeric"
-          value={height}
-          onChangeText={setHeight}
-        />
-        <Text style={styles.label}>Select Training Goal:</Text>
-        <View style={styles.buttonContainer}>
-          <Button title="Lose weight" onPress={() => setGoal('Lose weight')} />
-          <Button title="Build muscle" onPress={() => setGoal('Build muscle')} />
-          <Button title="Improve endurance" onPress={() => setGoal('Improve endurance')} />
-          <Button title="General fitness" onPress={() => setGoal('General fitness')} />
-        </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your weight (kg)"
+            keyboardType="numeric"
+            value={weight}
+            onChangeText={setWeight}
+            returnKeyType="next"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your height (cm)"
+            keyboardType="numeric"
+            value={height}
+            onChangeText={setHeight}
+            returnKeyType="next"
+          />
+          <Text style={styles.label}>Select Training Goal:</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={() => setGoal('Lose weight')} style={styles.button}><Text>Lose weight</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => setGoal('Build muscle')} style={styles.button}><Text>Build muscle</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => setGoal('Improve endurance')} style={styles.button}><Text>Improve endurance</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => setGoal('General fitness')} style={styles.button}><Text>General fitness</Text></TouchableOpacity>
+          </View>
 
-        <Button title="Save" onPress={saveUserData} color="#ffff" />
-      </View>
+          <TouchableOpacity onPress={saveUserData} style={styles.saveButton}>
+            <Text style={styles.saveButtonText}>Save</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </GradientBackground>
   );
 };
 
-// Profile-näyttö (käyttäjän tietojen näyttäminen)
+// Profile Screen
 const ProfileScreen = () => {
   const [userData, setUserData] = useState(null);
 
@@ -116,8 +182,7 @@ const ProfileScreen = () => {
       try {
         const data = await AsyncStorage.getItem('userData');
         if (data) {
-          const parsedData = JSON.parse(data);
-          setUserData(parsedData);
+          setUserData(JSON.parse(data));
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -129,7 +194,7 @@ const ProfileScreen = () => {
   if (!userData) {
     return (
       <GradientBackground>
-        <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Profile</Text>
+        <Text style={[styles.title, { fontFamily: 'Bangers-Regular' }]}>Profile</Text>
         <Text style={styles.profileText}>Loading...</Text>
       </GradientBackground>
     );
@@ -137,7 +202,7 @@ const ProfileScreen = () => {
 
   return (
     <GradientBackground>
-      <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Profile</Text>
+      <Text style={[styles.title, { fontFamily: 'Bangers-Regular' }]}>Profile</Text>
       <View>
         <Text style={styles.profileText}>Name: {userData.name}</Text>
         <Text style={styles.profileText}>Age: {userData.age}</Text>
@@ -149,150 +214,3 @@ const ProfileScreen = () => {
     </GradientBackground>
   );
 };
-
-// Sport Type -näyttö
-const SportScreen = () => {
-  const [selectedSports, setSelectedSports] = useState([]);
-  const [recentlyAdded, setRecentlyAdded] = useState(null);
-
-  const handleAddSport = (sport) => {
-    if (sport) {
-      setSelectedSports((prev) => [...prev, sport]);
-      setRecentlyAdded(sport);
-      setTimeout(() => setRecentlyAdded(null), 2000);
-    }
-  };
-
-  return (
-    <GradientBackground>
-      <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Sport Type</Text>
-      <SportsList onAddSport={handleAddSport} recentlyAdded={recentlyAdded} />
-    </GradientBackground>
-  );
-};
-
-// Distance -näyttö
-const DistanceScreen = () => {
-  const [distances, setDistances] = useState([]);
-
-  const handleAddDistance = (distance) => {
-    if (distance) {
-      setDistances((prev) => [...prev, distance]);
-    }
-  };
-
-  return (
-    <GradientBackground>
-      <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Distance</Text>
-      <DistanceButton onAddDistance={handleAddDistance} />
-    </GradientBackground>
-  );
-};
-
-// Duration -näyttö
-const DurationScreen = () => {
-  const [durations, setDurations] = useState([]);
-
-  const handleAddDuration = (duration) => {
-    if (duration) {
-      setDurations((prev) => [...prev, duration]);
-    }
-  };
-
-  return (
-    <GradientBackground>
-      <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Duration</Text>
-      <DurationButton onAddDuration={handleAddDuration} />
-    </GradientBackground>
-  );
-};
-
-// Workout Plan -näyttö
-const WorkoutPlanScreen = () => (
-  <GradientBackground>
-    <Text style={[styles.title, { fontFamily: 'bangers-regular' }]}>Workout Plan</Text>
-    <SportCalendar />
-  </GradientBackground>
-);
-
-// Pääsovellus, joka sisältää Drawer Navigationin
-export default function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
-  useEffect(() => {
-    const loadFonts = async () => {
-      await Font.loadAsync({
-        'bangers-regular': require('./assets/Bangers/Bangers-Regular.ttf'),
-      });
-      setFontsLoaded(true);
-    };
-
-    loadFonts();
-  }, []);
-
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Loading Fonts...</Text>
-      </View>
-    );
-  }
-
-  return (
-    <NavigationContainer>
-      <Drawer.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          drawerActiveTintColor: '#ffffff',
-          drawerInactiveTintColor: '#fff',
-          drawerStyle: { backgroundColor: '#FF6347' },
-          headerStyle: { backgroundColor: '#FF4500' },
-          headerTintColor: '#fff',
-        }}
-      >
-        <Drawer.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            drawerIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Sport Type"
-          component={SportScreen}
-          options={{
-            drawerIcon: ({ color, size }) => <Ionicons name="fitness" size={size} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Distance"
-          component={DistanceScreen}
-          options={{
-            drawerIcon: ({ color, size }) => <Ionicons name="ribbon" size={size} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Duration"
-          component={DurationScreen}
-          options={{
-            drawerIcon: ({ color, size }) => <Ionicons name="time" size={size} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Workout Plan"
-          component={WorkoutPlanScreen}
-          options={{
-            drawerIcon: ({ color, size }) => <Ionicons name="clipboard" size={size} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            drawerIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
-          }}
-        />
-      </Drawer.Navigator>
-    </NavigationContainer>
-  );
-}

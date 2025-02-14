@@ -1,33 +1,94 @@
-import React from 'react';
-import { View, Text, FlatList } from 'react-native';
-import styles from './style';
+import React, { useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useSports } from './SportContext';
+import { MaterialIcons } from '@expo/vector-icons'; // Ikonikirjasto
+import styles from './style'; // Oletetaan, että tyylit on määritetty tässä
+import { LinearGradient } from 'expo-linear-gradient'; // Lisää LinearGradient importti
 
-const SportCalendar = ({ selectedSports = [] }) => {
-  console.log("Selected Sports:", selectedSports); // Debugging
+const SportCalendar = () => {
+  const { selectedSports, removeSport } = useSports();
+  const navigation = useNavigation();
+
+  // Poista urheilutapahtuma
+  const handleRemoveSport = (sport) => {
+    removeSport(sport);
+  };
+
+  // Merkitse urheilutapahtuma suoritettuksi
+  const handleMarkAsCompleted = (sport) => {
+    alert(`${sport.sport} has been marked as completed.`);
+  };
+
+  // Seuraamme, onko napit näkyvissä
+  const [selectedSportIndex, setSelectedSportIndex] = useState(null);
+
+  // Näytä piilotetut napit, jos urheilutapahtumaa klikataan
+  const handleSportPress = (index) => {
+    setSelectedSportIndex(selectedSportIndex === index ? null : index);
+  };
 
   return (
-    <View style={[styles.calendarContainer, { flex: 1, padding: 20 }]}>
-      <Text style={styles.subTitle}>📆 Weekly Workout Plan</Text>
-      {selectedSports.length > 0 ? (
-        <FlatList
-          data={selectedSports}
-          renderItem={({ item }) => (
-            <View style={styles.exerciseItem}>
-              <Text style={styles.exerciseText}>
-                🏋️ {item.sport || 'Unknown Sport'} ({item.level || 'Unknown Level'})
-              </Text>
-              <Text style={styles.dateText}>
-                📅 {item.date || 'Unknown Date'} 🕒 {item.time || 'Unknown Time'}
-              </Text>
-            </View>
-          )}
-          keyExtractor={(item, index) => `${item.sport}-${index}`}
-          contentContainerStyle={{ paddingBottom: 20 }}
-        />
-      ) : (
-        <Text style={styles.noResultsText}>No sports added yet.</Text>
-      )}
-    </View>
+    <LinearGradient
+      colors={['#3B0B17', '#FE2E2E', '#FFFFFF']} // Uusi gradientti
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container} // Tässä käytetään samoja tyylejä, joita olet määrittänyt styles.js tiedostossa
+    >
+      <View style={styles.calendarContainer}>
+        <TouchableOpacity style={styles.wideButton} onPress={() => navigation.navigate('Sports List')}>
+          <Text style={styles.buttonText}>➕ Add More Sports</Text>
+        </TouchableOpacity>
+
+        {selectedSports && selectedSports.length > 0 ? (
+          <FlatList
+            data={selectedSports
+              .sort((a, b) => {
+                const dateA = new Date(`${a.date} ${a.time}`);
+                const dateB = new Date(`${b.date} ${b.time}`);
+                return dateA - dateB;
+              })
+            }
+            renderItem={({ item, index }) =>
+              item && item.sport && item.level && item.date && item.time ? (
+                <View style={styles.listItem}>
+                  <TouchableOpacity onPress={() => handleSportPress(index)}>
+                    <Text style={styles.sportText}>
+                      {item.sport} <Text style={styles.level}>({item.level})</Text>
+                    </Text>
+                    <Text style={styles.dateTime}>📅 {item.date}  |  🕒 {item.time}</Text>
+                  </TouchableOpacity>
+
+                  {/* Näytetään napit vain, jos urheilutapahtuma on valittu */}
+                  {selectedSportIndex === index && (
+                    <View style={styles.buttonContainer}>
+                      <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => handleRemoveSport(item)}
+                      >
+                        <MaterialIcons name="delete" size={20} color="white" />
+                        <Text style={styles.buttonText}> Remove</Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={styles.completedButton}
+                        onPress={() => handleMarkAsCompleted(item)}
+                      >
+                        <MaterialIcons name="check-circle" size={20} color="white" />
+                        <Text style={styles.buttonText}> Completed</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+              ) : null
+            }
+            keyExtractor={(item, index) => `${item?.sport || 'unknown'}-${index}`}
+          />
+        ) : (
+          <Text style={styles.noDataText}>No sports selected 🏀</Text>
+        )}
+      </View>
+    </LinearGradient>
   );
 };
 

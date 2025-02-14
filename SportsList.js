@@ -1,34 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, SectionList, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 import styles from './style';
-import SportModal from './SportModal';  // ✅ Varmistetaan, että import on oikein
-import SportCalendar from './SportCalendar'; // ✅ Varmistetaan, että import on oikein
+import SportModal from './SportModal';
+import { useSports } from './SportContext'; // Importoi konteksti
 
 const SportsList = () => {
-  const [selectedSports, setSelectedSports] = useState([]); 
+  const { addSport } = useSports(); // Käytä kontekstia
   const [searchInput, setSearchInput] = useState('');
   const [filteredSports, setFilteredSports] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSport, setSelectedSport] = useState(null);
 
-  const sportsCategories = [
-    { title: 'Endurance Sports', data: ['Running', 'Cycling', 'Swimming', 'Rowing', 'Track and Field'] },
-    { title: 'Combat Sports', data: ['Boxing', 'Kickboxing', 'Judo', 'Karate', 'Taekwondo', 'Wrestling', 'MMA', 'Archery'] },
-    { title: 'Strength Training', data: ['Weightlifting', 'Gym Workout', 'Bench Press', 'Deadlift', 'Squats', 'Pull-ups', 'Push-ups', 'Lunges'] },
-    { title: 'Bodyweight Training', data: ['Planks', 'Russian Twists', 'Burpees', 'Kettlebell Swings', 'Battle Ropes'] },
-    { title: 'Functional Training', data: ['CrossFit', 'HIIT', 'Fitness'] },
-    { title: 'Mobility & Recovery', data: ['Yoga', 'Stretching'] },
-    { title: 'Extreme & Outdoor', data: ['Climbing', 'Surfing', 'Dancing', 'Zumba'] }
-  ];
+  const navigation = useNavigation();
 
+  const sportsCategories = [
+    { title: 'Endurance Sports', data: ['Running', 'Cycling', 'Swimming', 'Rowing', 'Triathlon', 'Hiking', 'Walking', 'Jogging'] },
+    { title: 'Combat Sports', data: ['Boxing', 'Kickboxing', 'Judo', 'MMA', 'Wrestling', 'Karate', 'Taekwondo', 'Brazilian Jiu-Jitsu', 'Muay Thai', 'Kung Fu', 'Self-defense', 'Fencing'] },
+    { title: 'Strength Training', data: ['Weightlifting', 'Gym Workout', 'Deadlift', 'Powerlifting', 'Crossfit', 'Bodybuilding', 'Kettlebell Training', 'Resistance Bands'] },
+    { title: 'Fitness & Wellness', data: ['Yoga', 'Pilates', 'HIIT', 'Zumba', 'Aerobics', 'Barre', 'Stretching', 'Core Workouts', 'Bodyweight Exercises', 'Circuit Training', 'Spin Class'] },
+    { title: 'Team Sports', data: ['Football', 'Basketball', 'Volleyball', 'Rugby', 'Handball', 'Cricket', 'Baseball', 'Softball'] },
+    { title: 'Outdoor & Adventure Sports', data: ['Rock Climbing', 'Hiking', 'Mountain Biking', 'Trail Running', 'Kayaking', 'Stand Up Paddleboarding', 'Geocaching', 'Camping', 'Fishing'] },
+    { title: 'Water Sports', data: ['Surfing', 'Kayaking', 'Diving', 'Paddleboarding', 'Sailing', 'Water Polo', 'Snorkeling', 'Wakeboarding'] },
+    { title: 'Winter Sports', data: ['Skiing', 'Snowboarding', 'Ice Hockey', 'Bobsleigh', 'Figure Skating', 'Ski Jumping', 'Snowshoeing', 'Snowmobiling'] },
+    { title: 'Racquet Sports', data: ['Tennis', 'Badminton', 'Table Tennis', 'Squash', 'Pickleball', 'Racquetball'] },
+    { title: 'Motor Sports', data: ['Formula 1', 'MotoGP', 'Rally', 'Go-Karting', 'Motorcross', 'Nascar'] },
+    { title: 'Casual Sports', data: ['Frisbee', 'Kickball', 'Dodgeball', 'Tag', 'Capture the Flag', 'Bowling', 'Mini Golf', 'Horseback Riding'] }
+  ];
   useEffect(() => {
     setFilteredSports(sportsCategories);
   }, []);
 
   const searchSports = (input) => {
     setSearchInput(input);
-
     if (!input.trim()) {
       setFilteredSports(sportsCategories);
       return;
@@ -37,68 +43,66 @@ const SportsList = () => {
     const filtered = sportsCategories
       .map(category => ({
         title: category.title,
-        data: category.data.filter(sport => sport.toLowerCase().includes(input.toLowerCase()))
+        data: category.data.filter(sport =>
+          sport.toLowerCase().includes(input.toLowerCase())
+        )
       }))
       .filter(category => category.data.length > 0);
 
     setFilteredSports(filtered);
   };
-
-  const handleAddSport = (sport, level, date) => {
-    if (!sport || !level || !date) return;
-
-    const newSport = { sport, level, date };
-    setSelectedSports(prevSports => [...prevSports, newSport]);
-  };
-
-  const openModal = (sport) => {
-    setSelectedSport(sport);
-    setModalVisible(true);
-  };
-
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={24} color="#FF6347" style={styles.searchIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Search sports..."
-          value={searchInput}
-          onChangeText={searchSports}
+    <LinearGradient
+      colors={['#3B0B17', '#FE2E2E', '#FFFFFF']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity 
+          style={styles.wideButton}
+          onPress={() => navigation.navigate('Sport Calendar')}
+        >
+          <Text style={styles.buttonText}>View My Calendar</Text>
+        </TouchableOpacity>
+
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={20} color="#FF6347" />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search..."
+            value={searchInput}
+            onChangeText={searchSports}
+          />
+        </View>
+
+        <SectionList
+          sections={filteredSports}
+          keyExtractor={(item, index) => `${item}-${index}`}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text style={styles.categoryTitle}>{title}</Text>
+          )}
+          renderItem={({ item }) => (
+            <View style={styles.exerciseItem}>
+              <Text style={styles.exerciseText}>{item}</Text>
+              <TouchableOpacity onPress={() => {
+                setSelectedSport(item);
+                setModalVisible(true);
+              }}>
+                <Ionicons name="add-circle-outline" size={25} color="#FF6347" />
+              </TouchableOpacity>
+            </View>
+          )}
         />
-      </View>
 
-      <Text style={styles.subTitle}>Available Sports</Text>
-
-      <SectionList
-        sections={filteredSports}
-        keyExtractor={(item, index) => `${item}-${index}`}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.categoryTitle}>{title}</Text>
-        )}
-        renderItem={({ item }) => (
-          <View style={styles.exerciseItem}>
-            <Text style={styles.exerciseText}>{item}</Text>
-            <TouchableOpacity onPress={() => openModal(item)}>
-              <Ionicons name="add-circle-outline" size={24} color="#FF6347" />
-            </TouchableOpacity>
-          </View>
-        )}
-        ListEmptyComponent={<Text style={styles.noResultsText}>No sports found. Try a different search.</Text>}
-      />
-
-      {/* ✅ Varmistetaan, että komponentit eivät ole undefined ennen renderöintiä */}
-      {SportCalendar && <SportCalendar selectedSports={selectedSports} />}
-
-      {SportModal && (
         <SportModal 
           modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
+          setModalVisible={() => setModalVisible(false)}
           selectedSport={selectedSport}
-          saveSelection={handleAddSport}
+          saveSelection={addSport} // Lähetä tiedot suoraan kontekstiin
         />
-      )}
-    </View>
+      </View>
+    </LinearGradient>
   );
 };
 

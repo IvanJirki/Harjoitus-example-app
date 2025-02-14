@@ -19,15 +19,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   subTitle: {
-    textAlign: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    textAlign: 'left',
+    shadowColor: '#FFFF',
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.75,
     shadowRadius: 3.5,
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
     color: '#fff',
-    marginTop: 10,
+    marginTop: 1,
     marginBottom: 15,
   },
   // Search input container
@@ -50,14 +50,16 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   input: {
-    height: 45,
-    flex: 1,
+    height: 50,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    backgroundColor: '#fff',
     fontSize: 16,
     color: '#333',
-    paddingLeft: 15,
-    borderRadius: 25,
-    backgroundColor: '#f9f9f9',
-  },
+  },  
   addButton: {
     backgroundColor: '#FF4500',
     borderRadius: 25,
@@ -80,17 +82,17 @@ const styles = StyleSheet.create({
   exerciseItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: 3,
+    paddingHorizontal: 25,
     backgroundColor: '#fff',
-    borderRadius: 20,
-    borderWidth: 1.5,
+    borderRadius: 30,
+    borderWidth: 0.1,
     borderColor: '#ddd',
-    marginBottom: 15,
+    marginBottom: 7,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1.0,
-    shadowRadius: 4,
+    shadowRadius: 2,
     elevation: 4,
     width: '100%',
   },
@@ -262,11 +264,24 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   saveButton: {
-    backgroundColor: '#32CD32',
+    backgroundColor: '#FF6347',
     paddingVertical: 14,
     paddingHorizontal: 30,
-    borderRadius: 10,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
   },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },  
   buttonText: {
     color: '#fff',
     fontSize: 18,
@@ -291,7 +306,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF6347',
   },
   buttonText: {
-    color: '#FF6347',
+    color: '#FFFF',
     fontSize: 16,
   },
   goalButton: {
@@ -318,6 +333,181 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     borderRadius: 5,
   },
+
+  // Home Page Specific Styling (Enhancements)
+  homeTitle: {
+    textAlign: 'center',
+    fontSize: 45,
+    color: '#fff',
+    marginBottom: 20,
+    fontWeight: 'bold',
+    fontFamily: 'bangers-regular', // Optional custom font
+  },
+  inputContainer: {
+    width: '100%',
+    paddingTop: 20,
+    alignItems: 'stretch',
+    marginBottom: 15,
+  },
+  saveButton: {
+    backgroundColor: '#FF4500',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  genderButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  genderButton: {
+    backgroundColor: '#FF4500',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  selectedGenderButton: {
+    backgroundColor: '#FF4500',
+  },
+  genderButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  profileText: {
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 10,
+    fontWeight: '600',
+  },
+  wideButton: {
+    backgroundColor: '#FF4500',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+
+  // Calendar styling)
+// Calendar styling
+calendarContainer: {
+  flex: 1,
+  padding: 20,
+  // Ei taustaväriä täällä, koska tausta tulee LinearGradientista
+},
+wideButton: {
+  backgroundColor: '#FA8258',
+  padding: 15,
+  borderRadius: 10,
+  alignItems: 'center',
+  marginBottom: 20,
+},
+buttonText: {
+  color: 'white',
+  fontSize: 16,
+  fontWeight: 'bold',
+},
+listItem: {
+  backgroundColor: 'rgba(255, 255, 255, 0.7)', // Vähemmän intensiivinen valkoinen tausta
+  padding: 15,
+  marginBottom: 10,
+  borderRadius: 8,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 3,
+},
+sportText: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  color: '#333',
+},
+level: {
+  fontSize: 16,
+  color: '#555',
+},
+dateTime: {
+  fontSize: 14,
+  color: '#666',
+  marginTop: 5,
+},
+removeButton: {
+  flexDirection: 'row',
+  backgroundColor: '#FF4C4C',
+  paddingVertical: 5, // Vähennetään pystysuoraa täytettä
+  paddingHorizontal: 12, // Vähennetään vaakasuoraa täytettä
+  borderRadius: 50, // Pyöristetään kulmat entistä enemmän
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: 60,
+  elevation: 15, // Lisää varjoa, jotta nappi erottuu paremmin
+  shadowColor: '#000', // Lisätään varjo
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,
+  shadowRadius: 5,
+},
+
+completedButton: {
+  flexDirection: 'row',
+  backgroundColor: '#4CAF50',
+  paddingVertical: 5, // Vähennetään pystysuoraa täytettä
+  paddingHorizontal: 12, // Vähennetään vaakasuoraa täytettä
+  borderRadius: 50, // Pyöristetään kulmat entistä enemmän
+  alignItems: 'center',
+  justifyContent: 'center',
+  elevation: 5, // Lisää varjoa, jotta nappi erottuu paremmin
+  shadowColor: '#000', // Lisätään varjo
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,
+  shadowRadius: 5,
+},
+
+buttonContainer: {
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  marginTop: 10,
+  gap: 10, // Lisää tilaa nappien väliin
+},
+
+noDataText: {
+  fontSize: 16,
+  color: '#888',
+  textAlign: 'center',
+  marginTop: 20,
+},
 });
 
 export default styles;

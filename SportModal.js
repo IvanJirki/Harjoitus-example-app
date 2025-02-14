@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Modal, View, Text, TouchableOpacity, Animated } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
+import { useSports } from './SportContext';  // Lisää tämä
 import styles from './style';
 
-const SportModal = ({ modalVisible, setModalVisible, selectedSport, saveSelection }) => {
+const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
+  const { addSport } = useSports();  // Käytetään contextin funktiota
   const [selectedLevel, setSelectedLevel] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(new Date(new Date().setHours(8, 0, 0, 0)));
   const [step, setStep] = useState(1);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -30,11 +32,11 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport, saveSelectio
   };
 
   const handleSave = () => {
-    const formattedDate = selectedDate ? selectedDate.toDateString() : '';
-    const formattedTime = selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+    const formattedDate = selectedDate.toDateString();
+    const formattedTime = selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    if (selectedSport && selectedLevel && formattedDate && formattedTime) {
-      saveSelection(selectedSport, selectedLevel, formattedDate, formattedTime);
+    if (selectedSport && selectedLevel) {
+      addSport(selectedSport, selectedLevel, formattedDate, formattedTime);  // TÄRKEÄÄ: Tallennetaan contextiin
     }
     handleClose();
   };
@@ -43,15 +45,14 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport, saveSelectio
     <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={handleClose}>
       <View style={styles.modalOverlay}>
         <Animated.View style={[styles.modalContent, { opacity: fadeAnim }]}>
-          {/* 🔹 Varmistetaan, että `selectedSport` ei ole tyhjä */}
           <Text style={styles.modalTitle}>{selectedSport ? selectedSport : "Select Sport"}</Text>
-          {/* 🔹 Tason valinta */}
+
           {step === 1 && (
             <>
               <Text style={styles.modalLabel}>Select Level:</Text>
               <View style={styles.pickerContainer}>
                 <Picker
-                  selectedValue={selectedLevel || ''} // ✅ Jos null, asetetaan tyhjä merkkijono
+                  selectedValue={selectedLevel || ''}
                   onValueChange={(itemValue) => setSelectedLevel(itemValue)}
                   style={{ color: 'black' }}
                   itemStyle={{ color: 'black' }}
@@ -65,41 +66,35 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport, saveSelectio
             </>
           )}
 
-          {/* 🔹 Päivämäärän valinta */}
           {step === 2 && (
             <>
               <Text style={styles.modalLabel}>Select Date:</Text>
               <DateTimePicker
-                value={selectedDate || new Date()} // ✅ Jos null, käytetään oletusarvoa
+                value={selectedDate}
                 mode="date"
                 display="default"
+                minimumDate={new Date()}
                 onChange={(event, date) => {
-                  if (date) setSelectedDate(date); // ✅ Tarkistetaan, ettei `date` ole undefined
+                  if (date) setSelectedDate(date);
                 }}
               />
-
             </>
           )}
 
-          {/* 🔹 Kellonajan valinta */}
           {step === 3 && (
             <>
               <Text style={styles.modalLabel}>Select Time:</Text>
               <DateTimePicker
-                style={{ color: 'black' }}
-                itemStyle={{ color: 'black' }}
-                value={selectedTime || new Date()} // ✅ Oletusarvo
+                value={selectedTime}
                 mode="time"
                 display="default"
                 onChange={(event, time) => {
-                  if (time) setSelectedTime(time); // ✅ Estetään undefined-virhe
+                  if (time) setSelectedTime(time);
                 }}
               />
-
             </>
           )}
 
-          {/* 🔹 Navigointipainikkeet */}
           <View style={styles.modalButtons}>
             {step > 1 && (
               <TouchableOpacity style={styles.previousButton} onPress={() => setStep(step - 1)}>
@@ -108,12 +103,21 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport, saveSelectio
             )}
             {step < 3 ? (
               <TouchableOpacity
-                style={[styles.nextButton, { opacity: step === 1 && !selectedLevel ? 0.5 : 1 }]}
+                style={[
+                  styles.nextButton,
+                  {
+                    opacity:
+                      (step === 1 && !selectedLevel) ||
+                      (step === 2 && !selectedDate)
+                        ? 0.5
+                        : 1,
+                  },
+                ]}
                 onPress={() => {
                   if (step === 1 && selectedLevel) setStep(2);
-                  else if (step === 2) setStep(3);
+                  else if (step === 2 && selectedDate) setStep(3);
                 }}
-                disabled={step === 1 && !selectedLevel}
+                disabled={(step === 1 && !selectedLevel) || (step === 2 && !selectedDate)}
               >
                 <Text style={styles.buttonText}>Next</Text>
               </TouchableOpacity>
