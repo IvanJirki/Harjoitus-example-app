@@ -10,8 +10,11 @@ import { useFonts } from 'expo-font';
 import SportCalendar from './SportCalendar';
 import SportsList from './SportsList';
 import styles from './style';
-import { SportProvider } from './SportContext'; // Lisää tämä importti
+import { SportProvider } from './SportContext'; 
 
+// Tuodaan myös uusi komponentti painikkeille
+import DurationButton from './DurationButton';
+import DistanceButton from './DistanceButton';
 
 // Drawer Navigator
 const Drawer = createDrawerNavigator();
@@ -19,7 +22,7 @@ const Drawer = createDrawerNavigator();
 // Gradient Background Component
 const GradientBackground = ({ children }) => (
   <LinearGradient
-    colors={['#FF4000', '#FE2E2E', '#FFFFFF']} // Vaaleammat värit
+    colors={['#3B0B17', '#FE2E2E', '#FFFFFF']}
     start={{ x: 0, y: 0 }}
     end={{ x: 1, y: 1 }}
     style={styles.container}
@@ -38,7 +41,6 @@ export default function App() {
   }
 
   return (
-    // Käytetään SportProvideria ympäröimään sovelluksen komponentit
     <SportProvider>
       <NavigationContainer>
         <Drawer.Navigator
@@ -77,6 +79,20 @@ export default function App() {
             component={SportsList}
             options={{
               drawerIcon: ({ color, size }) => <Ionicons name="list" size={size} color={color} />,
+            }}
+          />
+          <Drawer.Screen
+            name="Duration Button"
+            component={DurationButton}
+            options={{
+              drawerIcon: ({ color, size }) => <Ionicons name="timer" size={size} color={color} />,
+            }}
+          />
+          <Drawer.Screen
+            name="Distance Button"
+            component={DistanceButton}
+            options={{
+              drawerIcon: ({ color, size }) => <Ionicons name="walk" size={size} color={color} />,
             }}
           />
         </Drawer.Navigator>
@@ -119,49 +135,65 @@ const HomeScreen = ({ navigation }) => {
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <Text style={[styles.title, { fontFamily: 'Bangers-Regular' }]}>Welcome to Workout Diary</Text>
           <TextInput
-            style={styles.input}
-            placeholder="Enter your name"
+            style={[styles.input, { backgroundColor: 'white' }]}
+            placeholder="Enter your full name"
             value={name}
             onChangeText={setName}
             returnKeyType="next"
           />
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: 'white' }]}
             placeholder="Enter your age"
             keyboardType="numeric"
             value={age}
             onChangeText={setAge}
             returnKeyType="next"
           />
-          <Text style={styles.label}>Select Gender:</Text>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={() => setGender('Male')} style={styles.button}><Text>Male</Text></TouchableOpacity>
-            <TouchableOpacity onPress={() => setGender('Female')} style={styles.button}><Text>Female</Text></TouchableOpacity>
-            <TouchableOpacity onPress={() => setGender('Other')} style={styles.button}><Text>Other</Text></TouchableOpacity>
-          </View>
-
           <TextInput
-            style={styles.input}
-            placeholder="Enter your weight (kg)"
-            keyboardType="numeric"
-            value={weight}
-            onChangeText={setWeight}
-            returnKeyType="next"
-          />
-          <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: 'white' }]}
             placeholder="Enter your height (cm)"
             keyboardType="numeric"
             value={height}
             onChangeText={setHeight}
             returnKeyType="next"
           />
+          <TextInput
+            style={[styles.input, { backgroundColor: 'white' }]}
+            placeholder="Enter your weight (kg)"
+            keyboardType="numeric"
+            value={weight}
+            onChangeText={setWeight}
+            returnKeyType="next"
+          />
+
+          <Text style={styles.label}>Select Gender:</Text>
+          <View style={styles.goalsContainer}>
+            {['Male', 'Female', 'Other'].map((option) => (
+              <TouchableOpacity
+                key={option}
+                onPress={() => setGender(option)}
+                style={[styles.goalButton, gender === option && styles.selectedGoalButton]}
+              >
+                <Text style={[styles.goalButtonText, gender === option && styles.selectedGoalButtonText]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
           <Text style={styles.label}>Select Training Goal:</Text>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={() => setGoal('Lose weight')} style={styles.button}><Text>Lose weight</Text></TouchableOpacity>
-            <TouchableOpacity onPress={() => setGoal('Build muscle')} style={styles.button}><Text>Build muscle</Text></TouchableOpacity>
-            <TouchableOpacity onPress={() => setGoal('Improve endurance')} style={styles.button}><Text>Improve endurance</Text></TouchableOpacity>
-            <TouchableOpacity onPress={() => setGoal('General fitness')} style={styles.button}><Text>General fitness</Text></TouchableOpacity>
+          <View style={styles.goalsContainer}>
+            {['Lose weight', 'Build muscle', 'Improve endurance', 'General fitness'].map((goalOption) => (
+              <TouchableOpacity
+                key={goalOption}
+                onPress={() => setGoal(goalOption)}
+                style={[styles.goalButton, goal === goalOption && styles.selectedGoalButton]}
+              >
+                <Text style={[styles.goalButtonText, goal === goalOption && styles.selectedGoalButtonText]}>
+                  {goalOption}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           <TouchableOpacity onPress={saveUserData} style={styles.saveButton}>
@@ -186,6 +218,7 @@ const ProfileScreen = () => {
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+        Alert.alert('Error', 'Failed to load your profile. Please try again later.');
       }
     };
     fetchUserData();
@@ -203,13 +236,13 @@ const ProfileScreen = () => {
   return (
     <GradientBackground>
       <Text style={[styles.title, { fontFamily: 'Bangers-Regular' }]}>Profile</Text>
-      <View>
-        <Text style={styles.profileText}>Name: {userData.name}</Text>
-        <Text style={styles.profileText}>Age: {userData.age}</Text>
-        <Text style={styles.profileText}>Gender: {userData.gender}</Text>
-        <Text style={styles.profileText}>Weight: {userData.weight} kg</Text>
-        <Text style={styles.profileText}>Height: {userData.height} cm</Text>
-        <Text style={styles.profileText}>Training Goal: {userData.goal}</Text>
+      <View style={styles.profileContainer}>
+        <Text style={styles.profileText}>Name: <Text style={styles.profileDetail}>{userData.name}</Text></Text>
+        <Text style={styles.profileText}>Age: <Text style={styles.profileDetail}>{userData.age}</Text></Text>
+        <Text style={styles.profileText}>Gender: <Text style={styles.profileDetail}>{userData.gender}</Text></Text>
+        <Text style={styles.profileText}>Weight: <Text style={styles.profileDetail}>{userData.weight} kg</Text></Text>
+        <Text style={styles.profileText}>Height: <Text style={styles.profileDetail}>{userData.height} cm</Text></Text>
+        <Text style={styles.profileText}>Training Goal: <Text style={styles.profileDetail}>{userData.goal}</Text></Text>
       </View>
     </GradientBackground>
   );
