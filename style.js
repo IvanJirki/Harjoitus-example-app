@@ -1,15 +1,16 @@
 import { StyleSheet } from 'react-native';
-const styles = ({
+
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'stretch',
-    padding: 20, // Puolipiste rivin lopussa
-    backgroundColor: '#f7f7f7', // Puolipiste rivin lopussa
+    padding: 20,
+    backgroundColor: '#f7f7f7',
   },
   title: {
     textAlign: 'center',
-    fontSize: 60, // Puolipiste rivin lopussa
+    fontSize: 60,
     color: '#FFFF',
     marginBottom: 20,
     marginTop: 50,
@@ -17,13 +18,13 @@ const styles = ({
     textShadowColor: '#000',
     textShadowOffset: { width: 2, height: 2 },
     textShadowOpacity: 0.5,
-    textShadowRadius: 8, // Puolipiste rivin lopussa
+    textShadowRadius: 8,
   },
   subTitle: {
     textAlign: 'left',
     fontSize: 22,
     fontWeight: '600',
-    color: '#FF6347',  // Accent color for better visibility
+    color: '#FF6347',
     marginBottom: 15,
     textShadowColor: '#000',
     textShadowOffset: { width: 0, height: 1 },
@@ -39,7 +40,7 @@ const styles = ({
     marginBottom: 15,
   },
   input: {
-    height: 45,  // Slightly taller input fields
+    height: 45,
     borderColor: '#ddd',
     borderWidth: 1,
     marginBottom: 12,
@@ -52,7 +53,7 @@ const styles = ({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 3,  // Added subtle elevation for a modern look
+    elevation: 3,
   },
   inputError: {
     borderColor: '#FF4500',
@@ -79,7 +80,7 @@ const styles = ({
 
   // Gender Selection
   label: {
-    fontSize: 18, // Adjusted for consistency
+    fontSize: 18,
     marginVertical: 12,
     color: '#FFF',
   },
@@ -116,7 +117,7 @@ const styles = ({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 25,  // More space around buttons
+    marginTop: 25,
     paddingHorizontal: 10,
   },
   wideButton: {
@@ -140,8 +141,9 @@ const styles = ({
     width: 250,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 120,  // Increased spacing
+    marginTop: '10%',
     marginLeft: 50,
+    marginBottom: 70,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.35,
@@ -150,7 +152,7 @@ const styles = ({
   },
   saveButtonText: {
     color: '#fff',
-    fontSize: 20,  // Larger font for prominence
+    fontSize: 20,
     fontWeight: 'bold',
   },
   addButton: {
@@ -180,7 +182,7 @@ const styles = ({
     paddingHorizontal: 25,
     backgroundColor: '#fff',
     borderRadius: 30,
-    marginBottom: 12,  // Slightly more space between items
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1.0,
@@ -199,7 +201,7 @@ const styles = ({
 
   // Category Title
   categoryTitle: {
-    fontSize: 26,  // Larger size for category headers
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#FF6347',
     paddingVertical: 10,
@@ -280,7 +282,7 @@ const styles = ({
     marginTop: 20,
   },
 
-  // Training Goal Styles (New Styles)
+  // Training Goal Styles
   goalButtonContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -317,6 +319,124 @@ const styles = ({
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
+  profileText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#FFF',
+    textAlign: 'center',
+    marginVertical: 8,
+    textShadowColor: '#000',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 4,
+    letterSpacing: 1.2,
+    backgroundColor: 'rgb(255, 68, 0)',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    overflow: 'hidden',
+  },
+
+  profileDetail: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#FFD700',
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+  },
+
+  // Profile Edit Section
+  profileContainer: {
+    padding: 20,
+    backgroundColor: 'rgba(104, 103, 103, 0.42)', // Updated background color
+    borderRadius: 10,
+    marginTop: 20,
+},
+
+  profileText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: 'rgb(0, 0, 0)',
+    marginBottom: 10,
+    textAlign: 'left',
+  },
+
+  profileDetail: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: 'rgb(255, 255, 255)',
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    marginBottom: 10,
+  },
+
+  // Edit and Save buttons
+  editButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    paddingVertical: 8,
+    paddingHorizontal: 25,
+    marginVertical: 10,
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+
+  editButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
+  saveButton: {
+    backgroundColor: 'rgba(78, 78, 78, 0.27)',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    width: 250,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: '10%',
+    marginLeft: 50,
+    marginBottom: 70,
+    borderRadius: 50,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 15,
+  },
+
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+
+  input: {
+    height: 45,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingLeft: 10,
+    borderRadius: 8,
+    backgroundColor: 'rgb(104, 103, 103)',
+    fontSize: 18,
+    color: '#333',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+
+  inputError: {
+    borderColor: '#FF4500',
+    borderWidth: 1.5,
+    marginBottom: 10,
+  },
+
 });
 
 export default styles;

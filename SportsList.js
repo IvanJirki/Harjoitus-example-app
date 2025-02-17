@@ -29,6 +29,7 @@ const SportsList = () => {
     { title: 'Motor Sports', data: ['Formula 1', 'MotoGP', 'Rally', 'Go-Karting', 'Motorcross', 'Nascar'] },
     { title: 'Casual Sports', data: ['Frisbee', 'Kickball', 'Dodgeball', 'Tag', 'Capture the Flag', 'Bowling', 'Mini Golf', 'Horseback Riding'] }
   ];
+
   useEffect(() => {
     setFilteredSports(sportsCategories);
   }, []);
@@ -51,6 +52,7 @@ const SportsList = () => {
 
     setFilteredSports(filtered);
   };
+
   return (
     <LinearGradient
       colors={['#3B0B17', '#FE2E2E', '#FFFFFF']}
@@ -59,8 +61,8 @@ const SportsList = () => {
       style={styles.container}
     >
       <View style={{ flex: 1 }}>
-        <TouchableOpacity 
-          style={styles.wideButton}
+        <TouchableOpacity
+          style={[styles.wideButton, { marginBottom:25 }]} // Lisää marginaali ylös
           onPress={() => navigation.navigate('Sport Calendar')}
         >
           <Text style={styles.buttonText}>View My Calendar</Text>
@@ -95,7 +97,7 @@ const SportsList = () => {
           )}
         />
 
-        <SportModal 
+        <SportModal
           modalVisible={modalVisible}
           setModalVisible={() => setModalVisible(false)}
           selectedSport={selectedSport}

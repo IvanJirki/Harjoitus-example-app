@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Accelerometer } from 'expo-sensors';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,6 +17,8 @@ const StepCounter = () => {
   const [lastUpdateTime, setLastUpdateTime] = useState(Date.now());
   const [motionDetected, setMotionDetected] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
+  const [workoutHistory, setWorkoutHistory] = useState([]);
+  const [showMore, setShowMore] = useState(false);
   const updateInterval = 100;
 
   const [fontsLoaded] = useFonts({
@@ -88,6 +90,14 @@ const StepCounter = () => {
     if (intervalId) {
       clearInterval(intervalId);
     }
+
+    const newWorkout = {
+      time: `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`,
+      steps,
+      distance: distance.toFixed(2),
+      calories: calories.toFixed(2),
+    };
+    setWorkoutHistory([newWorkout, ...workoutHistory]);
   };
 
   const resetTraining = () => {
@@ -101,6 +111,23 @@ const StepCounter = () => {
     setSeconds(0);
   };
 
+  const clearHistory = () => {
+    Alert.alert(
+      "Confirm",
+      "Are you sure you want to clear your workout history?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: () => setWorkoutHistory([]),
+        },
+      ]
+    );
+  };
+
   const renderButton = (title, onPress, icon) => (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <Ionicons name={icon} size={30} color="#fff" />
@@ -109,13 +136,13 @@ const StepCounter = () => {
   );
 
   if (!fontsLoaded) {
-    return null; // Wait for font to load
+    return null;
   }
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <LinearGradient
-        colors={['#3B0B17', '#FE2E2E', '#FFFFFF']} // Updated gradient background
+        colors={['#3B0B17', '#FE2E2E', '#FFFFFF']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.container}
@@ -139,6 +166,32 @@ const StepCounter = () => {
           {renderButton('Stop Training', stopTraining, 'pause')}
           {renderButton('Reset', resetTraining, 'refresh')}
         </View>
+
+        {workoutHistory.length > 0 && (
+          <View style={styles.historyContainer}>
+            <View style={styles.historyHeader}>
+              <Text style={styles.historyTitle}>Workout History</Text>
+              <TouchableOpacity style={styles.clearHistoryButton} onPress={clearHistory}>
+                <Ionicons name="trash-bin" size={25} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            {workoutHistory.slice(0, showMore ? workoutHistory.length : 4).map((workout, index) => (
+              <View key={index} style={styles.historyRow}>
+                <Text style={styles.historyText}>
+                  {workout.time} | {workout.steps} steps | {workout.distance} km | {workout.calories} kcal
+                </Text>
+              </View>
+            ))}
+            {workoutHistory.length > 4 && (
+              <TouchableOpacity
+                style={styles.showMoreButton}
+                onPress={() => setShowMore(!showMore)}
+              >
+                <Text style={styles.showMoreText}>{showMore ? 'Show Less' : 'Show More'}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
       </LinearGradient>
     </ScrollView>
   );
@@ -146,8 +199,7 @@ const StepCounter = () => {
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    flexGrow: 1, // Allows scrolling when content is too long
-    paddingBottom: 20, // Added padding at the bottom to ensure the content has space when scrolling
+    flexGrow: 1,
   },
   container: {
     flex: 1,
@@ -160,31 +212,31 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'stretch',
     justifyContent: 'center',
-    paddingVertical: 20, // Added only vertical padding to center the title vertically
+    paddingVertical: 20,
   },
   title: {
     textAlign: 'center',
-    fontSize: 60, // Increased font size for more emphasis
+    fontSize: 60,
     color: '#fff',
     marginBottom: 20,
     marginTop: 50,
     fontWeight: 'bold',
-    textShadowColor: '#000', // Shadow color
-    textShadowOffset: { width: 2, height: 2 }, // Shadow offset
-    textShadowOpacity: 0.7, // Shadow opacity
-    textShadowRadius: 5, // Shadow blur radius
+    textShadowColor: '#000',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowOpacity: 0.7,
+    textShadowRadius: 5,
   },
   subTitle: {
-    fontSize: 22, // Increased font size for more emphasis
-    fontWeight: '600', // Slightly bolder text
+    fontSize: 22,
+    fontWeight: '600',
     color: '#fff',
-    marginTop: 10, // Adjusted top margin for spacing
-    marginBottom: 20, // Bottom margin stays to separate from the next section
-    textAlign: 'center', // Center the subtitle text horizontally
+    marginTop: 10,
+    marginBottom: 20,
+    textAlign: 'center',
     textShadowColor: '#000',
     textShadowOffset: { width: 0, height: 1 },
     textShadowOpacity: 0.75,
-    textShadowRadius: 3.5, // Added text shadow to make it pop
+    textShadowRadius: 3.5,
   },
   timerContainer: {
     alignItems: 'center',
@@ -218,7 +270,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   button: {
-    backgroundColor: '#FF6347',
+    backgroundColor: 'rgba(80, 80, 80, 0.32)',
     padding: 10,
     borderRadius: 5,
     flexDirection: 'row',
@@ -235,6 +287,57 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     marginLeft: 10,
+    color: '#fff',
+    fontSize: 18,
+  },
+  historyContainer: {
+    padding: 10,
+    backgroundColor: 'rgba(252, 252, 252, 0.32)',
+    borderRadius: 10,
+    borderWidth: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.24)',
+  },
+  historyHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  historyTitle: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  historyRow: {
+    marginBottom: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(88, 86, 86, 0.46)',
+    borderRadius: 8,
+    borderBottomWidth: 1,
+    backgroundColor: 'rgba(104, 103, 103, 0.27)',
+  },
+  historyText: {
+    fontSize: 16,
+    color: '#fff',
+    textAlign: 'center',
+  },
+  clearHistoryButton: {
+    backgroundColor: 'rgba(65, 64, 64, 0.36)',
+    padding: 10,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  showMoreButton: {
+    marginTop: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    backgroundColor: 'rgba(39, 39, 39, 0.4)',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  showMoreText: {
     color: '#fff',
     fontSize: 18,
   },

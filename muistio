@@ -1,8 +1,0 @@
-npm install react-native-gesture-handler
-npm install expo-linear-gradient
-npm install @expo/vector-icons
-
-
-git add .
-git commit -m "Tämä on commit-viesti"
-git push origin master

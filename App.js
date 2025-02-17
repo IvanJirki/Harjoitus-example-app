@@ -10,11 +10,10 @@ import { useFonts } from 'expo-font';
 import SportCalendar from './SportCalendar';
 import SportsList from './SportsList';
 import styles from './style';
-import { SportProvider } from './SportContext'; 
+import { SportProvider } from './SportContext';
 
 // Tuodaan myös uusi komponentti painikkeille
 import DurationButton from './DurationButton';
-import DistanceButton from './DistanceButton';
 
 // Drawer Navigator
 const Drawer = createDrawerNavigator();
@@ -82,17 +81,10 @@ export default function App() {
             }}
           />
           <Drawer.Screen
-            name="Duration Button"
+            name="Duration & Distance"
             component={DurationButton}
             options={{
               drawerIcon: ({ color, size }) => <Ionicons name="timer" size={size} color={color} />,
-            }}
-          />
-          <Drawer.Screen
-            name="Distance Button"
-            component={DistanceButton}
-            options={{
-              drawerIcon: ({ color, size }) => <Ionicons name="walk" size={size} color={color} />,
             }}
           />
         </Drawer.Navigator>
@@ -102,13 +94,27 @@ export default function App() {
 }
 
 // Home Screen
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
   const [goal, setGoal] = useState('');
+  const [formSaved, setFormSaved] = useState(false);
+
+  // Jos olemme saaneet käyttäjän tiedot ProfileScreenistä, esitä ne muokkauslomakkeessa
+  useEffect(() => {
+    if (route.params?.userData) {
+      const { userData } = route.params;
+      setName(userData.name);
+      setAge(userData.age);
+      setGender(userData.gender);
+      setWeight(userData.weight);
+      setHeight(userData.height);
+      setGoal(userData.goal);
+    }
+  }, [route.params?.userData]);
 
   const saveUserData = async () => {
     if (!name || !age || !gender || !weight || !height || !goal) {
@@ -120,7 +126,7 @@ const HomeScreen = ({ navigation }) => {
       const userData = { name, age, gender, weight, height, goal };
       await AsyncStorage.setItem('userData', JSON.stringify(userData));
       Alert.alert('Saved!', 'Your details have been saved.');
-      navigation.navigate('Profile');
+      setFormSaved(true);
     } catch (error) {
       Alert.alert('Error', 'Failed to save data.');
     }
@@ -134,71 +140,83 @@ const HomeScreen = ({ navigation }) => {
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <Text style={[styles.title, { fontFamily: 'Bangers-Regular' }]}>Welcome to Workout Diary</Text>
-          <TextInput
-            style={[styles.input, { backgroundColor: 'white' }]}
-            placeholder="Enter your full name"
-            value={name}
-            onChangeText={setName}
-            returnKeyType="next"
-          />
-          <TextInput
-            style={[styles.input, { backgroundColor: 'white' }]}
-            placeholder="Enter your age"
-            keyboardType="numeric"
-            value={age}
-            onChangeText={setAge}
-            returnKeyType="next"
-          />
-          <TextInput
-            style={[styles.input, { backgroundColor: 'white' }]}
-            placeholder="Enter your height (cm)"
-            keyboardType="numeric"
-            value={height}
-            onChangeText={setHeight}
-            returnKeyType="next"
-          />
-          <TextInput
-            style={[styles.input, { backgroundColor: 'white' }]}
-            placeholder="Enter your weight (kg)"
-            keyboardType="numeric"
-            value={weight}
-            onChangeText={setWeight}
-            returnKeyType="next"
-          />
 
-          <Text style={styles.label}>Select Gender:</Text>
-          <View style={styles.goalsContainer}>
-            {['Male', 'Female', 'Other'].map((option) => (
-              <TouchableOpacity
-                key={option}
-                onPress={() => setGender(option)}
-                style={[styles.goalButton, gender === option && styles.selectedGoalButton]}
-              >
-                <Text style={[styles.goalButtonText, gender === option && styles.selectedGoalButtonText]}>
-                  {option}
-                </Text>
+          {formSaved ? (
+            <View style={styles.centeredContainer}>
+              <Text style={[styles.title, { fontFamily: 'Bangers-Regular' }]}>Success!</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Sports List')} style={styles.saveButton}>
+                <Text style={styles.saveButtonText}>Start Training</Text>
               </TouchableOpacity>
-            ))}
-          </View>
+            </View>
+          ) : (
+            <View>
+              <TextInput
+                style={[styles.input, { backgroundColor: 'white' }]}
+                placeholder="Enter your full name"
+                value={name}
+                onChangeText={setName}
+                returnKeyType="next"
+              />
+              <TextInput
+                style={[styles.input, { backgroundColor: 'white' }]}
+                placeholder="Enter your age"
+                keyboardType="numeric"
+                value={age}
+                onChangeText={setAge}
+                returnKeyType="next"
+              />
+              <TextInput
+                style={[styles.input, { backgroundColor: 'white' }]}
+                placeholder="Enter your height (cm)"
+                keyboardType="numeric"
+                value={height}
+                onChangeText={setHeight}
+                returnKeyType="next"
+              />
+              <TextInput
+                style={[styles.input, { backgroundColor: 'white' }]}
+                placeholder="Enter your weight (kg)"
+                keyboardType="numeric"
+                value={weight}
+                onChangeText={setWeight}
+                returnKeyType="next"
+              />
 
-          <Text style={styles.label}>Select Training Goal:</Text>
-          <View style={styles.goalsContainer}>
-            {['Lose weight', 'Build muscle', 'Improve endurance', 'General fitness'].map((goalOption) => (
-              <TouchableOpacity
-                key={goalOption}
-                onPress={() => setGoal(goalOption)}
-                style={[styles.goalButton, goal === goalOption && styles.selectedGoalButton]}
-              >
-                <Text style={[styles.goalButtonText, goal === goalOption && styles.selectedGoalButtonText]}>
-                  {goalOption}
-                </Text>
+              <Text style={styles.label}>Select Gender:</Text>
+              <View style={styles.goalsContainer}>
+                {['Male', 'Female', 'Other'].map((option) => (
+                  <TouchableOpacity
+                    key={option}
+                    onPress={() => setGender(option)}
+                    style={[styles.goalButton, gender === option && styles.selectedGoalButton]}
+                  >
+                    <Text style={[styles.goalButtonText, gender === option && styles.selectedGoalButtonText]}>
+                      {option}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <Text style={styles.label}>Select Training Goal:</Text>
+              <View style={styles.goalsContainer}>
+                {['Lose weight', 'Build muscle', 'Improve endurance', 'General fitness'].map((goalOption) => (
+                  <TouchableOpacity
+                    key={goalOption}
+                    onPress={() => setGoal(goalOption)}
+                    style={[styles.goalButton, goal === goalOption && styles.selectedGoalButton]}
+                  >
+                    <Text style={[styles.goalButtonText, goal === goalOption && styles.selectedGoalButtonText]}>
+                      {goalOption}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <TouchableOpacity onPress={saveUserData} style={styles.saveButton}>
+                <Text style={styles.saveButtonText}>Save</Text>
               </TouchableOpacity>
-            ))}
-          </View>
-
-          <TouchableOpacity onPress={saveUserData} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
+            </View>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </GradientBackground>
@@ -206,15 +224,30 @@ const HomeScreen = ({ navigation }) => {
 };
 
 // Profile Screen
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const [userData, setUserData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false); // State for edit mode
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [gender, setGender] = useState('');
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [goal, setGoal] = useState('');
 
+  // Fetch user data when the screen is loaded
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const data = await AsyncStorage.getItem('userData');
         if (data) {
-          setUserData(JSON.parse(data));
+          const parsedData = JSON.parse(data);
+          setUserData(parsedData);
+          setName(parsedData.name);
+          setAge(parsedData.age);
+          setGender(parsedData.gender);
+          setWeight(parsedData.weight);
+          setHeight(parsedData.height);
+          setGoal(parsedData.goal);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -223,6 +256,27 @@ const ProfileScreen = () => {
     };
     fetchUserData();
   }, []);
+
+  const handleSave = async () => {
+    if (!name || !age || !gender || !weight || !height || !goal) {
+      Alert.alert('Error', 'Please fill in all fields before saving!');
+      return;
+    }
+
+    try {
+      const updatedUserData = { name, age, gender, weight, height, goal };
+      await AsyncStorage.setItem('userData', JSON.stringify(updatedUserData));
+      setUserData(updatedUserData);
+      setIsEditing(false); // Exit edit mode after saving
+      Alert.alert('Saved!', 'Your profile has been updated.');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save data.');
+    }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true); // Enable edit mode
+  };
 
   if (!userData) {
     return (
@@ -236,14 +290,87 @@ const ProfileScreen = () => {
   return (
     <GradientBackground>
       <Text style={[styles.title, { fontFamily: 'Bangers-Regular' }]}>Profile</Text>
-      <View style={styles.profileContainer}>
-        <Text style={styles.profileText}>Name: <Text style={styles.profileDetail}>{userData.name}</Text></Text>
-        <Text style={styles.profileText}>Age: <Text style={styles.profileDetail}>{userData.age}</Text></Text>
-        <Text style={styles.profileText}>Gender: <Text style={styles.profileDetail}>{userData.gender}</Text></Text>
-        <Text style={styles.profileText}>Weight: <Text style={styles.profileDetail}>{userData.weight} kg</Text></Text>
-        <Text style={styles.profileText}>Height: <Text style={styles.profileDetail}>{userData.height} cm</Text></Text>
-        <Text style={styles.profileText}>Training Goal: <Text style={styles.profileDetail}>{userData.goal}</Text></Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.profileContainer}>
+        {isEditing ? (
+          <>
+            <TextInput
+              style={[styles.input, { backgroundColor: 'white' }]}
+              placeholder="Enter your full name"
+              value={name}
+              onChangeText={setName}
+            />
+            <TextInput
+              style={[styles.input, { backgroundColor: 'white' }]}
+              placeholder="Enter your age"
+              keyboardType="numeric"
+              value={age}
+              onChangeText={setAge}
+            />
+            <TextInput
+              style={[styles.input, { backgroundColor: 'white' }]}
+              placeholder="Enter your height (cm)"
+              keyboardType="numeric"
+              value={height}
+              onChangeText={setHeight}
+            />
+            <TextInput
+              style={[styles.input, { backgroundColor: 'white' }]}
+              placeholder="Enter your weight (kg)"
+              keyboardType="numeric"
+              value={weight}
+              onChangeText={setWeight}
+            />
+
+            <Text style={styles.label}>Select Gender:</Text>
+            <View style={styles.goalsContainer}>
+              {['Male', 'Female', 'Other'].map((option) => (
+                <TouchableOpacity
+                  key={option}
+                  onPress={() => setGender(option)}
+                  style={[styles.goalButton, gender === option && styles.selectedGoalButton]}
+                >
+                  <Text style={[styles.goalButtonText, gender === option && styles.selectedGoalButtonText]}>
+                    {option}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text style={styles.label}>Select Training Goal:</Text>
+            <View style={styles.goalsContainer}>
+              {['Lose weight', 'Build muscle', 'Improve endurance', 'General fitness'].map((goalOption) => (
+                <TouchableOpacity
+                  key={goalOption}
+                  onPress={() => setGoal(goalOption)}
+                  style={[styles.goalButton, goal === goalOption && styles.selectedGoalButton]}
+                >
+                  <Text style={[styles.goalButtonText, goal === goalOption && styles.selectedGoalButtonText]}>
+                    {goalOption}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+              <Text style={styles.saveButtonText}>Save</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <Text style={styles.profileText}>Name: <Text style={styles.profileDetail}>{userData.name}</Text></Text>
+            <Text style={styles.profileText}>Age: <Text style={styles.profileDetail}>{userData.age}</Text></Text>
+            <Text style={styles.profileText}>Gender: <Text style={styles.profileDetail}>{userData.gender}</Text></Text>
+            <Text style={styles.profileText}>Weight: <Text style={styles.profileDetail}>{userData.weight} kg</Text></Text>
+            <Text style={styles.profileText}>Height: <Text style={styles.profileDetail}>{userData.height} cm</Text></Text>
+            <Text style={styles.profileText}>Training Goal: <Text style={styles.profileDetail}>{userData.goal}</Text></Text>
+
+            <TouchableOpacity onPress={handleEdit} style={styles.editButton}>
+              <Text style={styles.editButtonText}>Edit Profile</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </ScrollView>
     </GradientBackground>
   );
 };
+
