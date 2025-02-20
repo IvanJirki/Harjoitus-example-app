@@ -61,23 +61,27 @@ const SportCalendar = () => {
 
                   {/* Näytetään napit vain, jos urheilutapahtuma on valittu */}
                   {selectedSportIndex === index && (
-                    <View style={styles.buttonContainer}>
-                      <TouchableOpacity
-                        style={styles.removeButton}
-                        onPress={() => handleRemoveSport(item)}
-                      >
-                        <MaterialIcons name="delete" size={20} color="white" />
-                        <Text style={styles.buttonText}> Remove</Text>
-                      </TouchableOpacity>
+              <View style={styles.buttonContainer}>
+              {/* Remove Button */}
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => handleRemoveSport(item)}
+              >
+                <MaterialIcons name="delete" size={15} color="white" />
+                <Text style={styles.buttonText}> Remove</Text>
+              </TouchableOpacity>
+            
+              {/* Completed Button (Green, Same Style as Remove Button) */}
+              <TouchableOpacity
+                style={[styles.removeButton, styles.completedButton]} // Same style as removeButton
+                onPress={() => handleMarkAsCompleted(item)}
+              >
+                <MaterialIcons name="check-circle" size={15} color="white" />
+                <Text style={styles.buttonText}> Completed</Text>
+              </TouchableOpacity>
+            </View>
+            
 
-                      <TouchableOpacity
-                        style={styles.completedButton}
-                        onPress={() => handleMarkAsCompleted(item)}
-                      >
-                        <MaterialIcons name="check-circle" size={20} color="white" />
-                        <Text style={styles.buttonText}> Completed</Text>
-                      </TouchableOpacity>
-                    </View>
                   )}
                 </View>
               ) : null

@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import styles from './style';
 import SportModal from './SportModal';
-import { useSports } from './SportContext'; // Importoi konteksti
+import { useSports } from './SportContext'; // Käytä kontekstia
 
 const SportsList = () => {
   const { addSport } = useSports(); // Käytä kontekstia
@@ -62,7 +62,7 @@ const SportsList = () => {
     >
       <View style={{ flex: 1 }}>
         <TouchableOpacity
-          style={[styles.wideButton, { marginBottom:25 }]} // Lisää marginaali ylös
+          style={[styles.wideButton, { marginBottom: 25 }]} 
           onPress={() => navigation.navigate('Sport Calendar')}
         >
           <Text style={styles.buttonText}>View My Calendar</Text>
@@ -99,9 +99,9 @@ const SportsList = () => {
 
         <SportModal
           modalVisible={modalVisible}
-          setModalVisible={() => setModalVisible(false)}
+          setModalVisible={setModalVisible}
           selectedSport={selectedSport}
-          saveSelection={addSport} // Lähetä tiedot suoraan kontekstiin
+          saveSelection={addSport} 
         />
       </View>
     </LinearGradient>

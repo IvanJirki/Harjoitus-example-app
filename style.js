@@ -31,8 +31,6 @@ const styles = StyleSheet.create({
     textShadowOpacity: 0.75,
     textShadowRadius: 3.5,
   },
-
-  // Input fields
   inputContainer: {
     width: '100%',
     paddingTop: 20,
@@ -60,16 +58,14 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     marginBottom: 10,
   },
-
-  // Search Container
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
     marginBottom: 20,
     backgroundColor: 'white',
-    borderRadius: 30,
-    paddingHorizontal: 15,
+    borderRadius: 20,
+    paddingHorizontal: 25,
     paddingVertical: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -77,8 +73,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 8,
   },
-
-  // Gender Selection
   label: {
     fontSize: 18,
     marginVertical: 12,
@@ -111,15 +105,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-
-  // Buttons
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center',  // Keskittää napit vaakasuunnassa
+    alignItems: 'stretch',      // Keskittää napit pystysuunnassa
     marginTop: 25,
-    paddingHorizontal: 10,
-  },
+    paddingHorizontal: 20,
+  },  
   wideButton: {
     backgroundColor: '#FF4500',
     borderRadius: 25,
@@ -173,8 +165,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-
-  // Exercise items
   exerciseItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -198,8 +188,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     textAlign: 'center',
   },
-
-  // Category Title
   categoryTitle: {
     fontSize: 26,
     fontWeight: 'bold',
@@ -214,8 +202,6 @@ const styles = StyleSheet.create({
     textShadowRadius: 5,
     textAlign: 'left',
   },
-
-  // Modal Styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -242,8 +228,6 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     color: '#333',
   },
-
-  // Calendar styling
   calendarContainer: {
     flex: 1,
     padding: 20,
@@ -264,6 +248,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+
   removeButton: {
     flexDirection: 'row',
     backgroundColor: '#FF4C4C',
@@ -272,8 +257,17 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 60,
+    marginRight: 10,  // Vähentää välimatkaa napin ja seuraavan napin välillä
     elevation: 15,
+  },
+  completedButton: {
+    backgroundColor: '#28a745', // Green color
+    borderRadius: 50, // Same border radius as the remove button
+    paddingVertical: 6, // Same padding as the remove button
+    paddingHorizontal: 14, // Same horizontal padding as the remove button
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 15, // Same elevation as the remove button
   },
   noDataText: {
     fontSize: 18,
@@ -281,8 +275,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
-
-  // Training Goal Styles
   goalButtonContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -335,7 +327,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     overflow: 'hidden',
   },
-
   profileDetail: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -343,15 +334,12 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1.5,
   },
-
-  // Profile Edit Section
   profileContainer: {
     padding: 20,
-    backgroundColor: 'rgba(104, 103, 103, 0.42)', // Updated background color
+    backgroundColor: 'rgba(104, 103, 103, 0.42)', 
     borderRadius: 10,
     marginTop: 20,
-},
-
+  },
   profileText: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -359,7 +347,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'left',
   },
-
   profileDetail: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -368,8 +355,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     marginBottom: 10,
   },
-
-  // Edit and Save buttons
   editButton: {
     backgroundColor: 'rgba(0, 0, 0, 0.45)',
     paddingVertical: 8,
@@ -382,14 +367,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-
   editButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
   },
-
   saveButton: {
     backgroundColor: 'rgba(78, 78, 78, 0.27)',
     paddingVertical: 14,
@@ -407,13 +390,11 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 15,
   },
-
   saveButtonText: {
     color: '#fff',
     fontSize: 20,
     fontWeight: 'bold',
   },
-
   input: {
     height: 45,
     borderColor: '#ddd',
@@ -430,13 +411,30 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
   },
-
   inputError: {
     borderColor: '#FF4500',
     borderWidth: 1.5,
     marginBottom: 10,
   },
-
+  // New component style
+  newComponent: {
+    backgroundColor: '#FFD700',
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  newComponentText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;
