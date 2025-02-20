@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Modal, View, Text, TouchableOpacity, Animated, TouchableWithoutFeedback } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, Animated, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';  // Varmista, että tämä on asennettu
 import { useSports } from './SportContext';  
-import styles from './style';
 
 const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
   const { addSport } = useSports();  
@@ -44,19 +43,19 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
   return (
     <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={handleClose}>
       <TouchableWithoutFeedback onPress={handleClose}>
-        <View style={styles.modalOverlay}>
+        <View style={styles.ModalOverlay}>
           <TouchableWithoutFeedback>
-            <Animated.View style={[styles.modalContent, { opacity: fadeAnim }]}>
-              <Text style={styles.modalTitle}>{selectedSport ? selectedSport : "Select Sport"}</Text>
+            <Animated.View style={[styles.ModalContent, { opacity: fadeAnim }]}>
+              <Text style={styles.ModalTitle}>{selectedSport ? selectedSport : "Select Sport"}</Text>
 
               {step === 1 && (
                 <>
-                  <Text style={styles.modalLabel}>Select Level:</Text>
-                  <View style={styles.pickerContainer}>
+                  <Text style={styles.ModalLabel}>Select Level:</Text>
+                  <View style={styles.ModalPickerContainer}>
                     <Picker
                       selectedValue={selectedLevel || ''}
                       onValueChange={(itemValue) => setSelectedLevel(itemValue)}
-                      style={{ width: '100%', height: 50, color: 'black' }}  // Asetettu tyyli
+                      style={styles.ModalPicker}
                     >
                       <Picker.Item label="Choose level..." value="" />
                       <Picker.Item label="Beginner" value="beginner" />
@@ -69,7 +68,7 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
 
               {step === 2 && (
                 <>
-                  <Text style={styles.modalLabel}>Select Date:</Text>
+                  <Text style={styles.ModalLabel}>Select Date:</Text>
                   <DateTimePicker
                     value={selectedDate}
                     mode="date"
@@ -84,7 +83,7 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
 
               {step === 3 && (
                 <>
-                  <Text style={styles.modalLabel}>Select Time:</Text>
+                  <Text style={styles.ModalLabel}>Select Time:</Text>
                   <DateTimePicker
                     value={selectedTime}
                     mode="time"
@@ -96,16 +95,16 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
                 </>
               )}
 
-              <View style={styles.modalButtons}>
+              <View style={styles.ModalButtons}>
                 {step > 1 && (
-                  <TouchableOpacity style={styles.previousButton} onPress={() => setStep(step - 1)}>
-                    <Text style={styles.buttonText}>Previous</Text>
+                  <TouchableOpacity style={styles.ModalPreviousButton} onPress={() => setStep(step - 1)}>
+                    <Text style={styles.ModalButtonText}>Previous</Text>
                   </TouchableOpacity>
                 )}
                 {step < 3 ? (
                   <TouchableOpacity
                     style={[
-                      styles.nextButton,
+                      styles.ModalNextButton,
                       {
                         opacity:
                           (step === 1 && !selectedLevel) ||
@@ -120,11 +119,11 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
                     }}
                     disabled={(step === 1 && !selectedLevel) || (step === 2 && !selectedDate)}
                   >
-                    <Text style={styles.buttonText}>Next</Text>
+                    <Text style={styles.ModalButtonText}>Next</Text>
                   </TouchableOpacity>
                 ) : (
-                  <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                    <Text style={styles.buttonText}>Save</Text>
+                  <TouchableOpacity style={styles.ModalSaveButton} onPress={handleSave}>
+                    <Text style={styles.ModalButtonText}>Save</Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -135,5 +134,86 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
     </Modal>
   );
 };
+
+const styles = StyleSheet.create({
+  ModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ModalContent: {
+    width: '90%',
+    backgroundColor: '#fff',
+    padding: 35,
+    borderRadius: 10,
+    alignItems: 'center',
+    elevation: 12,
+  },
+  ModalTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#FF4500',
+    textAlign: 'center',
+  },
+  ModalLabel: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginVertical: 15,
+    color: '#333',
+  },
+  ModalPickerContainer: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    backgroundColor: '#f9f9f9',
+    marginBottom: 20,
+    overflow: 'hidden',
+    padding: 10,
+  },
+  ModalPicker: {
+    width: '100%',
+    height: 60,
+    color: '#21130d',
+    backgroundColor: '#f9f9f9',
+  },
+  ModalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
+  },
+  ModalPreviousButton: {
+    backgroundColor: '#999',
+    padding: 10,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  ModalNextButton: {
+    backgroundColor: '#FF4500',
+    padding: 10,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  ModalSaveButton: {
+    backgroundColor: '#28a745',
+    padding: 10,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  ModalButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
 
 export default SportModal;
