@@ -2,38 +2,34 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSports } from './SportContext';
-import { MaterialIcons } from '@expo/vector-icons'; // Ikonikirjasto
-import styles from './style'; // Oletetaan, että tyylit on määritetty tässä
-import { LinearGradient } from 'expo-linear-gradient'; // Lisää LinearGradient importti
+import { MaterialIcons } from '@expo/vector-icons';
+import styles from './style'; 
+import { LinearGradient } from 'expo-linear-gradient';
 
 const SportCalendar = () => {
   const { selectedSports, removeSport } = useSports();
   const navigation = useNavigation();
 
-  // Poista urheilutapahtuma
   const handleRemoveSport = (sport) => {
     removeSport(sport);
   };
 
-  // Merkitse urheilutapahtuma suoritettuksi
   const handleMarkAsCompleted = (sport) => {
     alert(`${sport.sport} has been marked as completed.`);
   };
 
-  // Seuraamme, onko napit näkyvissä
   const [selectedSportIndex, setSelectedSportIndex] = useState(null);
 
-  // Näytä piilotetut napit, jos urheilutapahtumaa klikataan
   const handleSportPress = (index) => {
     setSelectedSportIndex(selectedSportIndex === index ? null : index);
   };
 
   return (
     <LinearGradient
-      colors={['#3B0B17', '#FE2E2E', '#FFFFFF']} // Uusi gradientti
+      colors={['#3B0B17', '#FE2E2E', '#FFFFFF']} 
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.container} // Tässä käytetään samoja tyylejä, joita olet määrittänyt styles.js tiedostossa
+      style={styles.container} 
     >
       <View style={styles.calendarContainer}>
         <TouchableOpacity style={styles.wideButton} onPress={() => navigation.navigate('Sports List')}>
@@ -59,7 +55,7 @@ const SportCalendar = () => {
                     <Text style={styles.dateTime}>📅 {item.date}  |  🕒 {item.time}</Text>
                   </TouchableOpacity>
 
-                  {/* Näytetään napit vain, jos urheilutapahtuma on valittu */}
+                  {/* Näyttää napit vain, jos urheilutapahtuma on valittu */}
                   {selectedSportIndex === index && (
               <View style={styles.buttonContainer}>
               {/* Remove Button */}
@@ -71,9 +67,8 @@ const SportCalendar = () => {
                 <Text style={styles.buttonText}> Remove</Text>
               </TouchableOpacity>
             
-              {/* Completed Button (Green, Same Style as Remove Button) */}
               <TouchableOpacity
-                style={[styles.removeButton, styles.completedButton]} // Same style as removeButton
+                style={[styles.removeButton, styles.completedButton]}
                 onPress={() => handleMarkAsCompleted(item)}
               >
                 <MaterialIcons name="check-circle" size={15} color="white" />

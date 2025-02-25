@@ -5,10 +5,10 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import styles from './style';
 import SportModal from './SportModal';
-import { useSports } from './SportContext'; // Käytä kontekstia
+import { useSports } from './SportContext'; 
 
 const SportsList = () => {
-  const { addSport } = useSports(); // Käytä kontekstia
+  const { addSport } = useSports(); 
   const [searchInput, setSearchInput] = useState('');
   const [filteredSports, setFilteredSports] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);

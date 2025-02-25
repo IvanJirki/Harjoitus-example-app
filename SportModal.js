@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, View, Text, TouchableOpacity, Animated, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';  // Varmista, että tämä on asennettu
-import { useSports } from './SportContext';  
+import { Picker } from '@react-native-picker/picker';
+import { useSports } from './SportContext';
 
 const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
-  const { addSport } = useSports();  
+  const { addSport } = useSports();
   const [selectedLevel, setSelectedLevel] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(new Date(new Date().setHours(8, 0, 0, 0)));
@@ -24,6 +24,10 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
     }
   }, [modalVisible]);
 
+  useEffect(() => {
+    console.log("Selected Level:", selectedLevel); // Debuggaus
+  }, [selectedLevel]);
+
   const handleClose = () => {
     setModalVisible(false);
     setSelectedLevel('');
@@ -35,7 +39,7 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
     const formattedTime = selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     if (selectedSport && selectedLevel) {
-      addSport(selectedSport, selectedLevel, formattedDate, formattedTime);  
+      addSport(selectedSport, selectedLevel, formattedDate, formattedTime);
     }
     handleClose();
   };
@@ -45,7 +49,7 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
       <TouchableWithoutFeedback onPress={handleClose}>
         <View style={styles.ModalOverlay}>
           <TouchableWithoutFeedback>
-            <Animated.View style={[styles.ModalContent, { opacity: fadeAnim }]}>
+            <Animated.View style={[styles.ModalContent, { opacity: fadeAnim, paddingBottom: 30 }]}>
               <Text style={styles.ModalTitle}>{selectedSport ? selectedSport : "Select Sport"}</Text>
 
               {step === 1 && (
@@ -53,11 +57,12 @@ const SportModal = ({ modalVisible, setModalVisible, selectedSport }) => {
                   <Text style={styles.ModalLabel}>Select Level:</Text>
                   <View style={styles.ModalPickerContainer}>
                     <Picker
-                      selectedValue={selectedLevel || ''}
+                      selectedValue={selectedLevel}
                       onValueChange={(itemValue) => setSelectedLevel(itemValue)}
-                      style={styles.ModalPicker}
+                      style={[styles.ModalPicker, { height: 150, color: "#000" }]}
+                      itemStyle={{ fontSize: 18, color: "#000" }}
                     >
-                      <Picker.Item label="Choose level..." value="" />
+                      <Picker.Item label="Choose level..." value="" color="#888" />
                       <Picker.Item label="Beginner" value="beginner" />
                       <Picker.Item label="Intermediate" value="intermediate" />
                       <Picker.Item label="Advanced" value="advanced" />
@@ -175,8 +180,8 @@ const styles = StyleSheet.create({
   },
   ModalPicker: {
     width: '100%',
-    height: 60,
-    color: '#21130d',
+    height: 150,
+    color: '#000', // Asetetaan Pickerin fontin väri
     backgroundColor: '#f9f9f9',
   },
   ModalButtons: {

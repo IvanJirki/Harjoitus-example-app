@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',  // Keskittää napit vaakasuunnassa
-    alignItems: 'stretch',      // Keskittää napit pystysuunnassa
+    justifyContent: 'center',  
+    alignItems: 'stretch',    
     marginTop: 25,
     paddingHorizontal: 20,
   },  
@@ -233,17 +233,17 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,  // Vähentää välimatkaa napin ja seuraavan napin välillä
+    marginRight: 10,  
     elevation: 15,
   },
   completedButton: {
-    backgroundColor: '#28a745', // Green color
-    borderRadius: 50, // Same border radius as the remove button
-    paddingVertical: 6, // Same padding as the remove button
-    paddingHorizontal: 14, // Same horizontal padding as the remove button
+    backgroundColor: '#28a745', 
+    borderRadius: 50, 
+    paddingVertical: 6, 
+    paddingHorizontal: 14, 
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 15, // Same elevation as the remove button
+    elevation: 15,
   },
   noDataText: {
     fontSize: 18,
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     marginBottom: 10,
   },
-  // New component style
+  
   newComponent: {
     backgroundColor: '#FFD700',
     padding: 15,

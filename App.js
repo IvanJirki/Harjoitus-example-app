@@ -11,14 +11,10 @@ import SportCalendar from './SportCalendar';
 import SportsList from './SportsList';
 import styles from './style';
 import { SportProvider } from './SportContext';
-
-// Tuodaan myös uusi komponentti painikkeille
 import DurationButton from './DurationButton';
 
-// Drawer Navigator
 const Drawer = createDrawerNavigator();
 
-// Gradient Background Component
 const GradientBackground = ({ children }) => (
   <LinearGradient
     colors={['#3B0B17', '#FE2E2E', '#FFFFFF']}
@@ -103,7 +99,6 @@ const HomeScreen = ({ navigation, route }) => {
   const [goal, setGoal] = useState('');
   const [formSaved, setFormSaved] = useState(false);
 
-  // Jos olemme saaneet käyttäjän tiedot ProfileScreenistä, esitä ne muokkauslomakkeessa
   useEffect(() => {
     if (route.params?.userData) {
       const { userData } = route.params;
@@ -226,7 +221,7 @@ const HomeScreen = ({ navigation, route }) => {
 // Profile Screen
 const ProfileScreen = ({ navigation }) => {
   const [userData, setUserData] = useState(null);
-  const [isEditing, setIsEditing] = useState(false); // State for edit mode
+  const [isEditing, setIsEditing] = useState(false); 
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -234,7 +229,6 @@ const ProfileScreen = ({ navigation }) => {
   const [height, setHeight] = useState('');
   const [goal, setGoal] = useState('');
 
-  // Fetch user data when the screen is loaded
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -267,7 +261,7 @@ const ProfileScreen = ({ navigation }) => {
       const updatedUserData = { name, age, gender, weight, height, goal };
       await AsyncStorage.setItem('userData', JSON.stringify(updatedUserData));
       setUserData(updatedUserData);
-      setIsEditing(false); // Exit edit mode after saving
+      setIsEditing(false); 
       Alert.alert('Saved!', 'Your profile has been updated.');
     } catch (error) {
       Alert.alert('Error', 'Failed to save data.');
@@ -275,7 +269,7 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const handleEdit = () => {
-    setIsEditing(true); // Enable edit mode
+    setIsEditing(true); 
   };
 
   if (!userData) {
